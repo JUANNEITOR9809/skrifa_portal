@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% block title %}Soporte · Portal Skrifa Labs{% endblock %}
+{% block content %}
+<h1>Soporte y PQR</h1>
+<p class="sub">Peticiones, quejas, reclamos o fallas del programa. Le respondemos en máximo 15 días hábiles.</p>
+<div class="split">
+<form class="card" method="post" novalidate>{% csrf_token %}
+  <h2>Nuevo ticket</h2>
+  {% with f=form.tipo %}{% include "portal/_campo.html" %}{% endwith %}
+  {% with f=form.descripcion %}{% include "portal/_campo.html" %}{% endwith %}
+  {% with f=form.correo %}{% include "portal/_campo.html" %}{% endwith %}
+  <p class="hint">Lo llenamos con su correo registrado; no tiene que escribirlo otra vez.</p>
+  <div class="row"><button class="btn" type="submit">Enviar solicitud</button></div>
+</form>
+<div class="card tbl"><h2>Mis tickets</h2>
+  <table><thead><tr><th>Radicado</th><th>Tipo</th><th>Responder antes de</th><th>Estado</th></tr></thead><tbody>
+  {% for t in tickets %}<tr><td class="mono">{{ t.radicado }}</td><td>{{ t.get_tipo_display }}</td><td>{{ t.fecha_limite|date:"d/m/Y" }}</td>
+    <td>{% if t.respondido %}<span class="pill ok">Respondido</span>{% else %}<span class="pill wait">En revisión</span>{% endif %}</td></tr>
+  {% empty %}<tr><td colspan="4">Todavía no tiene tickets.</td></tr>{% endfor %}
+  </tbody></table>
+  <p class="hint" style="margin-top:10px">La fecha límite cuenta 15 días hábiles (sin sábados ni domingos; no descuenta festivos).</p>
+</div></div>
+{% endblock %}

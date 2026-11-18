@@ -1,0 +1,50 @@
+{% extends "portal/base.html" %}
+{% block title %}Contrato · Portal Skrifa Labs{% endblock %}
+{% block content %}
+{% if contrato.firmado %}
+<h1>Contrato {{ contrato.numero }}</h1>
+<p class="sub">Firmado electrónicamente. Este registro sirve como prueba según la Ley 527 de 1999.</p>
+<div class="card"><span class="pill ok">✔ Contrato firmado</span>
+  <dl style="margin-top:14px">
+    <dt>Firmado por</dt><dd>{{ user.email }}</dd>
+    <dt>Fecha</dt><dd>{{ contrato.firmado_en|date:"j \d\e F \d\e Y" }}</dd>
+    <dt>Hora</dt><dd>{{ contrato.firmado_en|time:"H:i:s" }} (hora de Colombia)</dd>
+    <dt>IP registrada</dt><dd>{{ contrato.ip_firma }}</dd>
+    <dt>Método</dt><dd>Casilla de aceptación + código OTP al correo</dd>
+    <dt>Huella del documento (SHA-256)</dt><dd class="mono">{{ contrato.huella }}</dd>
+  </dl>
+  <p class="hint" style="margin-top:12px">Si alguien cambia una sola letra del contrato, la huella cambia. Así se demuestra que el documento firmado es el original.</p>
+</div>
+<div class="row"><a class="btn" href="{% url 'pagos' %}" style="text-decoration:none">Ir a pagos</a></div>
+{% else %}
+<h1>Aceptar contrato {{ contrato.numero }}</h1>
+<p class="sub">Cliente: {{ cliente.empresa }} · Valor: {{ valor }} + IVA · Plazo: {{ contrato.plazo_semanas }} semanas</p>
+<div class="split">
+<form class="card" method="post">{% csrf_token %}
+  <details open><summary>Resumen del contrato y Términos y Condiciones</summary><ol>
+    <li><b>Objeto:</b> {{ contrato.objeto|lower }}.</li>
+    <li><b>Pagos:</b> 40 % al firmar, 40 % con la versión Beta y 20 % con el acta final, por pasarela autorizada.</li>
+    <li><b>Pruebas:</b> 10 días hábiles para revisar cada entrega.</li>
+    <li><b>Garantía:</b> 90 días para corregir errores sin costo.</li>
+    <li><b>Propiedad intelectual:</b> licencia de uso exclusiva para el cliente al pagar el 100 %.</li>
+    <li><b>PQR:</b> respuesta en máximo 15 días hábiles.</li>
+    <li><b>Firma:</b> marcar la casilla e ingresar el código equivale a firmar (Ley 527 de 1999).</li>
+  </ol></details>
+  <div class="chk"><input type="checkbox" name="acepta" id="cAcc" value="1" {% if marcado.acepta %}checked{% endif %}><label for="cAcc">He leído y acepto el contrato {{ contrato.numero }} y los Términos y Condiciones de Skrifa Labs S.A.S.</label></div>
+  <div class="chk"><input type="checkbox" name="datos" id="cDat" value="1" {% if marcado.datos %}checked{% endif %}><label for="cDat">Autorizo el tratamiento de mis datos personales según la Política de Datos.</label></div>
+  <div class="row" style="margin-top:6px"><button class="btn ghost" type="submit" name="accion" value="enviar_otp">Enviar código a mi correo</button></div>
+  <label for="otpIn">Código de 6 dígitos</label>
+  <input type="text" name="codigo" id="otpIn" class="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······">
+  <div class="row"><button class="btn" type="submit" name="accion" value="firmar">Aceptar y firmar</button></div>
+</form>
+<div class="card">
+  <p class="eyebrow">Bandeja de correo simulada</p>
+  <div class="mail" aria-live="polite">
+  {% if contrato.otp %}De: no-responder@skrifalabs.co<br>Para: {{ user.email }}<br>Asunto: Código para firmar el contrato {{ contrato.numero }}<br><br>
+    Su código de firma es: <b style="font-size:1.2rem;letter-spacing:.2em">{{ contrato.otp }}</b><br>Vence en {{ otp_minutos }} minutos. No lo comparta con nadie.
+  {% else %}Todavía no ha llegado ningún correo. Marque la casilla de aceptación y pulse "Enviar código a mi correo".{% endif %}
+  </div>
+  <p class="hint" style="margin-top:10px">En la versión real el código se envía por correo electrónico al representante legal.</p>
+</div></div>
+{% endif %}
+{% endblock %}

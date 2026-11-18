@@ -1,0 +1,38 @@
+{% extends "portal/base.html" %}
+{% block content %}
+<p class="eyebrow">Desarrollo de software a la medida para pymes</p>
+<h1>Código que impulsa tu negocio</h1>
+<p class="sub">Hacemos el programa que su negocio necesita, a su medida, y lo acompañamos después con soporte. Si todavía lleva ventas, inventarios o citas en Excel o en un cuaderno, empecemos por un diagnóstico gratis.</p>
+<div class="grid3">
+  <div class="card"><h3>Programas a la medida</h3><p class="hint" style="margin:0">Sistemas web y apps móviles: inventario para una ferretería, pedidos para un restaurante, citas para un consultorio.</p><p style="margin:10px 0 0"><b>Desde $8.000.000</b> + IVA</p></div>
+  <div class="card"><h3>Plan de soporte mensual</h3><p class="hint" style="margin:0">Mantenemos el programa funcionando, corregimos errores y hacemos mejoras. Garantía de 90 días incluida.</p><p style="margin:10px 0 0"><b>$450.000</b> al mes + IVA</p></div>
+  <div class="card"><h3>Asesoría tecnológica</h3><p class="hint" style="margin:0">Le ayudamos a escoger las herramientas digitales que más le convienen.</p><p style="margin:10px 0 0"><b>$120.000</b> la hora + IVA</p></div>
+</div>
+<div class="split" style="margin-top:22px">
+  <form class="card" method="post" novalidate>{% csrf_token %}
+    <h2>Solicite su diagnóstico gratis de 45 minutos</h2>
+    {% with f=form.nombre %}{% include "portal/_campo.html" %}{% endwith %}
+    {% with f=form.negocio %}{% include "portal/_campo.html" %}{% endwith %}
+    {% with f=form.correo %}{% include "portal/_campo.html" %}{% endwith %}
+    {% with f=form.necesidad %}{% include "portal/_campo.html" %}{% endwith %}
+    <div class="chk">{{ form.autoriza_datos }}<label for="{{ form.autoriza_datos.id_for_label }}">{{ form.autoriza_datos.label }}</label></div>
+    {% if form.autoriza_datos.errors %}<ul class="errorlist">{% for e in form.autoriza_datos.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    <div class="chk">{{ form.acepta_publicidad }}<label for="{{ form.acepta_publicidad.id_for_label }}">{{ form.acepta_publicidad.label }}</label></div>
+    <details><summary>Leer la Política de Datos</summary><p style="margin-top:8px">Usamos sus datos solo para agendar el diagnóstico y enviarle la propuesta. No los vendemos. Puede consultarlos, corregirlos o pedir que los borremos escribiendo a datos@skrifalabs.co.</p></details>
+    <div class="row"><button class="btn" type="submit">Solicitar diagnóstico</button></div>
+  </form>
+  <div class="card">
+    <h2>Cómo trabajamos</h2>
+    <ol style="padding-left:20px;margin:0">
+      <li>Diagnóstico gratis de su negocio.</li>
+      <li>Propuesta con alcance, precio y fechas.</li>
+      <li>Firma electrónica del contrato en este portal.</li>
+      <li>Anticipo del 40 % y desarrollo con reuniones de seguimiento.</li>
+      <li>Versión de pruebas (40 %) y 10 días hábiles para revisarla.</li>
+      <li>Entrega final (20 %), código fuente y factura electrónica.</li>
+      <li>Soporte mensual y garantía de 90 días.</li>
+    </ol>
+    {% if not user.is_authenticated %}<p class="hint" style="margin-top:14px">¿Ya es cliente? <a href="{% url 'ingresar' %}">Ingrese al portal</a>.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

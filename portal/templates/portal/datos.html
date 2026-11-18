@@ -1,0 +1,38 @@
+{% extends "portal/base.html" %}
+{% block title %}Mis datos · Portal Skrifa Labs{% endblock %}
+{% block content %}
+<h1>Mis datos personales</h1>
+<p class="sub">Según la Ley 1581 de 2012 usted puede conocer, actualizar, corregir y pedir que se borren sus datos, y revocar su autorización.</p>
+<div class="split">
+<div class="card">
+  <h2>Datos que tenemos de usted</h2>
+  <dl>
+    <dt>Nombre</dt><dd>{{ cliente.representante }}</dd>
+    <dt>Cargo</dt><dd>{{ cliente.cargo }}, {{ cliente.empresa }}</dd>
+    <dt>Correo</dt><dd>{{ user.email }}</dd>
+    <dt>Celular</dt><dd>{{ cliente.celular }}</dd>
+    <dt>Para qué los usamos</dt><dd>Contrato, facturación y soporte</dd>
+    <dt>Autorización</dt><dd>{% if contrato.firmado %}{{ contrato.firmado_en|date:"j \d\e F \d\e Y" }}{% else %}Pendiente (se da al firmar el contrato){% endif %}</dd>
+  </dl>
+  <form method="post" style="margin-top:16px">{% csrf_token %}
+    <input type="hidden" name="accion" value="publicidad">
+    <div class="chk"><input type="checkbox" name="acepta_publicidad" id="mkt" value="1" {% if cliente.acepta_publicidad %}checked{% endif %}><label for="mkt">Recibir noticias y ofertas de Skrifa Labs.</label></div>
+    <button class="btn ghost small" type="submit">Guardar preferencia</button>
+  </form>
+  <p class="hint" style="margin-top:10px">Solo le escribimos de lunes a viernes de 7 a. m. a 7 p. m. y sábados de 8 a. m. a 3 p. m. (Ley 2300 de 2023).</p>
+</div>
+<div class="card">
+  <h2>Hacer una solicitud</h2>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="accion" value="solicitud">
+    <label for="rType">¿Qué necesita?</label>
+    <select name="tipo" id="rType">{% for v, t in tipos %}<option value="{{ v }}">{{ t }}</option>{% endfor %}</select>
+    <p class="hint">Consultas: máximo 10 días hábiles. Correcciones y borrado: máximo 15 días hábiles.</p>
+    <div class="row"><button class="btn" type="submit">Enviar solicitud</button></div>
+  </form>
+  {% if solicitudes %}<div class="tbl" style="margin-top:14px"><table><thead><tr><th>Solicitud</th><th>Respuesta antes de</th></tr></thead><tbody>
+    {% for s in solicitudes %}<tr><td>{{ s.get_tipo_display }}</td><td>{{ s.fecha_limite|date:"d/m/Y" }}</td></tr>{% endfor %}
+  </tbody></table></div>{% endif %}
+  <p class="hint" style="margin-top:12px">Si no le respondemos a tiempo, puede quejarse ante la Superintendencia de Industria y Comercio (SIC).</p>
+</div></div>
+{% endblock %}

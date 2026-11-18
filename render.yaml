@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: skrifa-portal
+    runtime: python
+    plan: free
+    buildCommand: "bash build.sh"
+    startCommand: "python manage.py migrate && python manage.py crear_demo && gunicorn skrifa.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true

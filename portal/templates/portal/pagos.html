@@ -1,0 +1,26 @@
+{% extends "portal/base.html" %}
+{% block title %}Pagos · Portal Skrifa Labs{% endblock %}
+{% block content %}
+<h1>Pagos</h1>
+<p class="sub">Pague por PSE, tarjeta o transferencia. Skrifa Labs nunca guarda los datos de su tarjeta: todo lo procesa la pasarela.</p>
+<div class="card tbl"><table><thead><tr><th>Concepto</th><th>Cuándo</th><th>Valor</th><th>Estado</th><th></th></tr></thead><tbody>
+{% for r in filas %}<tr>
+  <td>{{ r.p.concepto }}</td><td>{{ r.p.momento }}</td>
+  <td>{{ r.valor }}<br><span class="hint">+ IVA {{ r.iva }} = {{ r.total }}</span></td>
+  <td>{% if r.p.estado == "pagado" %}<span class="pill ok">✔ Pagado</span><div class="hint mono">Factura {{ r.p.factura }}</div>{% elif r.p.estado == "disponible" %}<span class="pill wait">Por pagar</span>{% else %}<span class="pill todo">Aún no</span>{% endif %}</td>
+  <td>{% if r.p.estado == "disponible" %}<form method="post">{% csrf_token %}<input type="hidden" name="pago" value="{{ r.p.pk }}"><button class="btn small" name="accion" value="abrir" type="submit">Pagar</button></form>{% endif %}</td>
+</tr>{% endfor %}
+</tbody></table></div>
+{% if seleccionado %}
+<form class="card" method="post" style="margin-top:18px">{% csrf_token %}
+  <p class="eyebrow">Pasarela de pago simulada</p>
+  <h2>{{ seleccionado.concepto }}: {{ total_sel }} con IVA</h2>
+  <input type="hidden" name="pago" value="{{ seleccionado.pk }}">
+  <label for="gwM">Medio de pago</label>
+  <select name="medio" id="gwM">{% for m in medios %}<option>{{ m }}</option>{% endfor %}</select>
+  <div class="row"><button class="btn" type="submit" name="accion" value="confirmar">Confirmar pago</button><a class="btn ghost" href="{% url 'pagos' %}" style="text-decoration:none">Cancelar</a></div>
+</form>
+{% endif %}
+{% if not contrato.firmado %}<p class="hint" style="margin-top:14px">El anticipo se habilita cuando firme el contrato. <a href="{% url 'contrato' %}">Firmar ahora</a></p>{% endif %}
+<p class="hint" style="margin-top:14px">Después de cada pago emitimos la factura electrónica de venta por un proveedor autorizado por la DIAN.</p>
+{% endblock %}

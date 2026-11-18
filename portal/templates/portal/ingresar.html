@@ -1,0 +1,17 @@
+{% extends "portal/base.html" %}
+{% block title %}Ingresar · Portal Skrifa Labs{% endblock %}
+{% block content %}
+<div style="max-width:480px">
+<h1>Iniciar sesión</h1>
+<p class="sub">Ingrese con el correo registrado de su empresa. Para la demostración los datos ya están llenos.</p>
+<form class="card" method="post" novalidate>{% csrf_token %}
+  {% if form.non_field_errors %}<div class="msg badm" style="margin:0 0 8px">El correo o la contraseña no son correctos. Revíselos e inténtelo de nuevo.</div>{% endif %}
+  <label for="id_username">Correo electrónico</label>
+  <input type="email" name="username" id="id_username" autocomplete="username" value="{{ form.username.value|default:demo_usuario }}">
+  <label for="id_password">Contraseña</label>
+  <input type="password" name="password" id="id_password" autocomplete="current-password" value="{{ demo_clave }}">
+  <p class="hint">Puede pegar su contraseña o usar su gestor de contraseñas.</p>
+  <input type="hidden" name="next" value="{{ next }}">
+  <div class="row"><button class="btn" type="submit">Ingresar</button></div>
+</form></div>
+{% endblock %}

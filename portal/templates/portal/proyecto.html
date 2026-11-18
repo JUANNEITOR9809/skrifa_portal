@@ -1,0 +1,24 @@
+{% extends "portal/base.html" %}
+{% block title %}Mi proyecto · Portal Skrifa Labs{% endblock %}
+{% block content %}
+<p class="eyebrow">Contrato {{ contrato.numero }}</p>
+<h1>Sistema de inventario</h1>
+<p class="sub">{{ cliente.empresa }} · Valor {{ valor }} + IVA · Plazo {{ contrato.plazo_semanas }} semanas</p>
+{% if not contrato.firmado %}<div class="msg badm" style="margin:0 0 18px">Falta un paso: <b>firme el contrato</b> para que empecemos. <a href="{% url 'contrato' %}">Ir a firmar</a></div>{% endif %}
+<div class="card">
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>Avance general</b><b>{{ avance }} %</b></div>
+  <div class="prog" role="progressbar" aria-valuenow="{{ avance }}" aria-valuemin="0" aria-valuemax="100" aria-label="Avance del proyecto"><span style="width:{{ avance }}%"></span></div>
+  <p class="hint" style="margin:0">{% if contrato.firmado %}Próxima entrega: versión Beta, {{ proxima|date:"j \d\e F \d\e Y" }}.{% else %}El proyecto empieza cuando el contrato esté firmado y el anticipo pagado.{% endif %}</p>
+</div>
+<div class="card tbl" style="margin-top:18px">
+  <h2>Hitos</h2>
+  <table><thead><tr><th>Hito</th><th>Estado</th><th>Pago</th></tr></thead><tbody>
+  {% for nombre, pago, en_curso in hitos %}
+    <tr><td>{{ nombre }}</td>
+      <td>{% if pago.estado == "pagado" %}<span class="pill ok">✔ Terminado</span>{% elif en_curso %}<span class="pill wait">● En curso</span>{% else %}<span class="pill todo">○ Por iniciar</span>{% endif %}</td>
+      <td>{{ pago.concepto }} · {{ pago.get_estado_display }}</td></tr>
+  {% endfor %}
+  </tbody></table>
+</div>
+<div class="row"><a class="btn" href="{% url 'pagos' %}" style="text-decoration:none">Ver pagos</a><a class="btn ghost" href="{% url 'soporte' %}" style="text-decoration:none">Abrir ticket de soporte</a></div>
+{% endblock %}

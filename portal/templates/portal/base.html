@@ -1,0 +1,67 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}Portal Skrifa Labs{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="{% static 'portal/styles.css' %}">
+</head>
+<body>
+<div class="demo gut">Aplicación de demostración del proyecto final · Los pagos y correos son simulados</div>
+<header>
+  <div class="gut"><div class="in">
+    <div class="bar">
+      <a class="brand" href="{% url 'inicio' %}" style="color:inherit;text-decoration:none">SKRIFA LABS <small>Portal de clientes</small></a>
+      <div class="tools">
+        <button class="btn ghost small" id="fontBtn" type="button" aria-label="Agrandar el texto">Aa+ Texto</button>
+        {% if user.is_authenticated %}
+          <span class="hint" style="margin:0">{{ user.cliente.empresa|default:user.username }}</span>
+          <form class="inline" method="post" action="{% url 'salir' %}">{% csrf_token %}<button class="btn ghost small" type="submit">Salir</button></form>
+        {% endif %}
+      </div>
+    </div>
+    <nav aria-label="Secciones">
+      {% with n=request.resolver_match.url_name %}
+      <a href="{% url 'inicio' %}" {% if n == 'inicio' %}aria-current="page"{% endif %}>Inicio</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'proyecto' %}" {% if n == 'proyecto' %}aria-current="page"{% endif %}>Mi proyecto</a>
+        <a href="{% url 'contrato' %}" {% if n == 'contrato' %}aria-current="page"{% endif %}>Contrato</a>
+        <a href="{% url 'pagos' %}" {% if n == 'pagos' %}aria-current="page"{% endif %}>Pagos</a>
+        <a href="{% url 'soporte' %}" {% if n == 'soporte' %}aria-current="page"{% endif %}>Soporte</a>
+        <a href="{% url 'datos' %}" {% if n == 'datos' %}aria-current="page"{% endif %}>Mis datos</a>
+      {% else %}
+        <a href="{% url 'ingresar' %}" {% if n == 'ingresar' %}aria-current="page"{% endif %}>Ingresar</a>
+      {% endif %}
+      {% endwith %}
+    </nav>
+  </div></div>
+</header>
+
+<main class="gut"><div class="in">
+  {% if messages %}<div class="msgs" role="status" aria-live="polite">
+    {% for m in messages %}<div class="msg {% if m.tags == 'error' %}badm{% else %}good{% endif %}">{{ m }}</div>{% endfor %}
+  </div>{% endif %}
+  {% block content %}{% endblock %}
+</div></main>
+
+<footer><div class="gut"><div class="in foot">
+  <span>¿Necesita ayuda? soporte@skrifalabs.co · Lunes a viernes, 8 a. m. a 5 p. m.</span>
+  <span>Skrifa Labs S.A.S. · NIT por asignar · CIIU 6201 · Bogotá D.C.</span>
+  <form class="inline" method="post" action="{% url 'reiniciar' %}">{% csrf_token %}<button class="btn ghost small" type="submit">Reiniciar demostración</button></form>
+</div></div></footer>
+
+<script>
+(function(){
+  var KEY='skrifa-fs', fs=16;
+  try{fs=parseInt(localStorage.getItem(KEY))||16;}catch(e){}
+  document.documentElement.style.setProperty('--fs',fs+'px');
+  document.getElementById('fontBtn').addEventListener('click',function(){
+    fs=fs>=20?16:fs+2; document.documentElement.style.setProperty('--fs',fs+'px');
+    try{localStorage.setItem(KEY,fs);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

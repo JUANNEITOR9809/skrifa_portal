@@ -85,3 +85,5 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .msgs{display:grid;gap:8px;margin-bottom:18px}
 input[type=checkbox]{accent-color:var(--accent)}
 form.inline{display:inline}
+.brand{align-items:center}
+.brand .logo{width:36px;height:36px;flex:none;border-radius:8px}

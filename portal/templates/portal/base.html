@@ -7,13 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="{% static 'portal/styles.css' %}">
+<link rel="icon" type="image/svg+xml" href="{% static 'portal/logo.svg' %}">
 </head>
 <body>
 <div class="demo gut">Aplicación de demostración del proyecto final · Los pagos y correos son simulados</div>
 <header>
   <div class="gut"><div class="in">
     <div class="bar">
-      <a class="brand" href="{% url 'inicio' %}" style="color:inherit;text-decoration:none">SKRIFA LABS <small>Portal de clientes</small></a>
+      <a class="brand" href="{% url 'inicio' %}" style="color:inherit;text-decoration:none"><img class="logo" src="{% static 'portal/logo.svg' %}" alt="" width="36" height="36">SKRIFA LABS <small>Portal de clientes</small></a>
       <div class="tools">
         <button class="btn ghost small" id="fontBtn" type="button" aria-label="Agrandar el texto">Aa+ Texto</button>
         {% if user.is_authenticated %}
